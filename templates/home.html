@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block path %}
+{{ url_for('static', path='/styles_1.css') }}
+{% endblock %}
+
+{% block body %}
+<h1>Привет! Выбери тип свечек!</h1>
+<div class="links-container">
+<a href="/spichki-v-korobkah-2">Спички в коробках</a>
+<a href="/sigarnye-spichk">Спички сигарные</a>
+<a href="/spichki-v-flakonah">Спички в флаконах</a>
+<a href="/spichki-knijki">Спички книжки</a>
+<a href="/kaminnye-spichki">Каминные спички</a>
+<a href="/specialnye-vidy-spichek">Спечальные спички</a>
+<a href="/zubochistki">Зубачистки</a>
+<a href="/suvenirnye-nabory">Сувенирные</a>
+</div>
+{% endblock %}
