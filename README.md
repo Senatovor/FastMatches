@@ -16,7 +16,7 @@
 1. Перейдите в локальный сервер (8000:8000)  
 ![image](https://github.com/user-attachments/assets/73ecfc3e-b608-4ac2-a90f-d2c7b3dfaf9c)
 3. Выбирите тип спичек  
-![image](https://github.com/user-attachments/assets/39056275-84b3-4fb5-b9ae-632e6371cfb9)
+![image](https://github.com/user-attachments/assets/48528a7e-4c1f-430d-8295-939bf93c4e83)
 5. Чтобы отсортировать спички, нажмите на ссылки сверху, также вы можете нажать на кнопку 'Изменит цвет', чтобы посмотреть цену за весь тираж с изменением цвета спичек  
 ![image](https://github.com/user-attachments/assets/be976440-d849-4497-8c8d-5ebfb162685d)
 7. Также вы можете написать/посмотреть комментарии с оценкой спички, для этого нажмите на ссылку/названии спички  
