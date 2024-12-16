@@ -67,9 +67,7 @@ url_content = ['spichki-v-korobkah-2',
                'spichki-v-flakonah',
                'spichki-knijki',
                'kaminnye-spichki',
-               'specialnye-vidy-spichek',
-               'zubochistki',
-               'suvenirnye-nabory']
+               'specialnye-vidy-spichek']
 
 if __name__ == '__main__':
     for url_name in url_content:
@@ -104,7 +102,11 @@ if __name__ == '__main__':
                 filling_number = match_filling.group(1)
                 time = int(((int(first_number) * int(filling_number)) / 100 - 1) * 5)
             else:
-                time = 0
+                match = re.search(r"(\d+)х(\d+)", text)  # Используем re.search для поиска в любом месте строки
+                if match:
+                    first_digit = int(match.group(1))
+                    second_digit = int(match.group(2))
+                time = int(((int(first_digit) * int(second_digit)) / 100 - 1) * 5)
 
             object_math = SafetyMatch(name=math[0], description=math[1], price_list=array_price, time=time, star=0, expected_price=array_price[0].all_price)
             array.append(object_math)
