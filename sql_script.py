@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, create_engine, Float
 from sqlalchemy.orm.session import sessionmaker
 from parser import parsing_prices, parsing_math
 import re
+import os
 
 
 class Base(DeclarativeBase):
@@ -60,8 +61,6 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread
 SessionLocal = sessionmaker(autoflush=False, bind=engine)
 db = SessionLocal()
 
-Base.metadata.create_all(bind=engine)
-
 url_content = ['spichki-v-korobkah-2',
                'sigarnye-spichk',
                'spichki-v-flakonah',
@@ -69,7 +68,8 @@ url_content = ['spichki-v-korobkah-2',
                'kaminnye-spichki',
                'specialnye-vidy-spichek']
 
-if __name__ == '__main__':
+if not os.path.isfile("instance/sql_app.db"):
+    Base.metadata.create_all(bind=engine)
     for url_name in url_content:
         url = f'https://spichkata.ru/{url_name}/'
         prices = parsing_prices(url)
