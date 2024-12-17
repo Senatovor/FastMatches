@@ -1,0 +1,121 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 2.5em;
+    border-bottom: 2px solid #ddd;
+}
+
+h4 {
+    color: #2980b9;
+    margin: 10px 0;
+    text-align: center;
+    border-bottom: 2px solid #ddd;
+}
+
+h2 {
+    color: #34495e;
+    text-align: center;
+}
+
+a {
+    text-decoration: none;
+    color: #2980b9;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+#match-list {
+    width: 100%;
+    max-width: 800px;
+}
+
+.price-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.price-list li {
+    background: #ffffff;
+    border: 1px solid #dcdcdc;
+    border-radius: 5px;
+    margin: 10px 0;
+    padding: 15px;
+    transition: box-shadow 0.3s;
+}
+
+.price-list li:hover {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.output {
+    margin-top: 10px;
+    margin-left: 30px;
+    padding: 10px;
+    background-color: #ecf0f1;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+
+button {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #219653;
+}
+
+.back {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 20px;
+    padding: 10px;
+    background-color: cornflowerblue;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.shop {
+    position: relative;
+    left: 80%;
+}
+
+.shop-list {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: yellowgreen;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 20px;
+}
+
+.shop:hover {
+    background-color: green;
+}

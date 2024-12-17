@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ candle.catagory }}
+{% endblock %}
+
+{% block path %}
+{{ url_for('static', path='/styles_2.css') }}
+{% endblock %}
+
+{% block body %}
+<h1>{{ candle.catagory }}</h1>
+
+<script>
+    function showData(edition, price, outputId) {
+        const number = edition * price + edition * 0.3;
+        const outputDiv = document.getElementById(outputId);
+        if (outputDiv.innerHTML === "") { // Проверяем, пуст ли div
+            outputDiv.innerHTML = `<p>С добавлением цвета: ${number}</p>`;
+        } else {
+            outputDiv.innerHTML = ""; // Очищаем div
+        }
+    }
+</script>
+
+<form action="/shopping/{{ candle.catagory }}">
+    <button class="shop-list">Корзина</button>
+</form>
+
+<form action="/">
+    <button class="back">Вернутся</button>
+</form>
+
+<h4><a href="/sorted_by_time/{{ candle.catagory }}">Сортировать по времени сгорания</a></h4>
+<h4><a href="/sorted_by_stars/{{ candle.catagory }}">Сортировать по рейтингу</a></h4>
+<h4><a href="/sorted_by_price/{{ candle.catagory }}">Сортировать по цене (за тираж - 500)</a></h4>
+<h4><a href="/{{ candle.catagory }}">Вернуть изначальную сортировку (по имени)</a></h4>
+
+<div id="match-list">
+    {% for match in candle.cat_id %}
+    <h2><a href="/more/{{ candle.catagory }}/{{ match.id }}">{{ match.name }}</a></h2>
+    <p>{{ match.description }}</p>
+    <p>Время сгорания упаковки: {{ match.time }} секунды</p>
+    <p>Рейтинг: {{ match.star }}</p>
+    <ul class="price-list">
+        {% for price_item in match.price_list %}
+        <li>
+            Тираж: {{ price_item.edition }}<br>
+            Цена за одну: {{ price_item.price }}<br>
+            Общая цена: {{ price_item.all_price }} рублей<br>
+            <form action="/shopping_add/{{ match.id }}/{{ price_item.id }}/{{ candle.catagory }}" method="post">
+                <button class="shop">Добавить в корзину</button>
+            </form>
+            <button data-edition="{{ price_item.edition }}" data-price="{{ price_item.price }}"
+                    data-output-id="output-{{ price_item.id }}">Изменить цвет
+            </button>
+            <div id="output-{{ price_item.id }}" class="output"></div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+</div>
+
+<script>
+    const buttons = document.querySelectorAll('#match-list button');
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            const edition = parseFloat(button.dataset.edition);
+            const price = parseFloat(button.dataset.price);
+            const outputId = button.dataset.outputId; // Используем data-output-id
+            showData(edition, price, outputId);
+        });
+    });
+</script>
+
+{% endblock %}
+
