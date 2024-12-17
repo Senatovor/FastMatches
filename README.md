@@ -1,12 +1,15 @@
 # Сайт спичек
 
 **Как поднять?**
-1. Скачайте(а затем распакуйте) или клонируйте репозиторий по SHH  
-![image](https://github.com/user-attachments/assets/830520e0-1660-4cbc-9118-f37ca52ed8aa)  
-3. Запустите build.sh в проводнике или командой **./build.sh** в терминале  
-![image](https://github.com/user-attachments/assets/99abd165-198b-4c40-98ed-9793096a3693)
+1. Скачайте(а затем распакуйте) или клонируйте репозиторий по SHH
 
-![image](https://github.com/user-attachments/assets/74fcaa6f-8474-4598-925b-628cdea62fa3)  
+![image](https://github.com/user-attachments/assets/830520e0-1660-4cbc-9118-f37ca52ed8aa)  
+
+3. Запустите build.sh в проводнике или командой **./build.sh** в терминале
+
+  1. ![image](https://github.com/user-attachments/assets/99abd165-198b-4c40-98ed-9793096a3693)  
+
+  2. ![image](https://github.com/user-attachments/assets/74fcaa6f-8474-4598-925b-628cdea62fa3)  
 
 4. Ждите распаковку проект, после чего перейдите в контейнер
 5. Переходите в localhost - http://localhost:8000
