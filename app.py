@@ -127,4 +127,4 @@ def shoping_del(shop_id: int, url: str, db: sessionmaker = Depends(get_db)):
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
