@@ -9,7 +9,7 @@
 3. Ждите распаковку проект, после чего перейдите в контейнер
 4. Переходите в localhost - http://localhost:8000
 > **ВАЖНО:** перед переходом в localhost, убедитесь что в логах вы увидели эти строчки:
-![image](https://github.com/user-attachments/assets/45582609-44dc-4d86-885a-205d14980fc6)
+![image](https://github.com/user-attachments/assets/45582609-44dc-4d86-885a-205d14980fc6)  
 > Иначе при переходе в localhost, выдаст ошибку сервера
 5. Пользуемся!
 
