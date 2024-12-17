@@ -11,7 +11,7 @@
 
   * ![image](https://github.com/user-attachments/assets/74fcaa6f-8474-4598-925b-628cdea62fa3)  
 
-4. Ждите распаковку проект, после чего перейдите в контейнер
+4. Ждите распаковку проекта, после чего перейдите в контейнер
 5. Переходите в localhost - http://localhost:8000
 > **ВАЖНО:** перед переходом в localhost, убедитесь что в логах вы увидели эти строчки:
 ![image](https://github.com/user-attachments/assets/45582609-44dc-4d86-885a-205d14980fc6)  
