@@ -3,7 +3,8 @@
 **Как поднять?**
 1. Скачайте(а затем распакуйте) или клонируйте репозиторий по SHH
 
-![image](https://github.com/user-attachments/assets/830520e0-1660-4cbc-9118-f37ca52ed8aa)  
+![image](https://github.com/user-attachments/assets/d8e7ecda-9958-45f5-90d8-d310def76d0c)
+
 
 3. Запустите build.sh в проводнике или командой **./build.sh** в терминале
 
