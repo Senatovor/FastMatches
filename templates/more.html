@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ candle.name }}
+{% endblock %}
+
+{% block path %}
+{{ url_for('static', path='/styles_3.css') }}
+{% endblock %}
+
+{% block body %}
+<form action="/{{ url }}">
+    <button class="back">Вернутся</button>
+</form>
+
+<h1> Комментарии к {{ candle.name }}</h1>
+
+
+{% for comm in candle.commentaring %}
+<p>{{ comm.comment }} - {{ comm.stars }}</p>
+{% endfor %}
+
+<form method="post" class="forming">
+    <input type="text" id="comm" name="comm" class="comment-input" required
+           placeholder="Введите ваш комментарий..."></br>
+    <input type="number" id="star" name="star" min="0" max="5" step="1" required
+           placeholder="Впишите оценку от 0 до 5"></br>
+    <input type="submit" value="Отправить"></br>
+</form>
+
+{% endblock %}

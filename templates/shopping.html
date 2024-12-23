@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Shop list
+{% endblock %}
+
+{% block path %}
+{{ url_for('static', path='/styles_4.css') }}
+{% endblock %}
+
+{% block body %}
+<h1>Ваша корзина - Вся стоимость: {{ all_price }} руб</h1>
+
+<form action="/{{ url }}">
+    <button class="shop">Вернутся</button>
+</form>
+
+<ul>
+    {% for item in shop_item %}
+    <li>
+        <div>
+            Название: {{ item.match_name }}<br>
+            Тираж: {{ item.match_edition }}<br>
+            Цена: {{ item.match_price }}
+        </div>
+        <form action="/shopping_del/{{ item.id }}/{{ url }}" method="post">
+            <button class="delete">Удалить с корзины</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
