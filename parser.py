@@ -101,6 +101,9 @@ def give(urls):
         mathes = parsing_math(url)
         imges = parsing_img(url)
         array = []
+        first_digit = 0
+        first_number = 0
+        second_digit = 0
         for price, math, img in zip(prices, mathes, imges):
             array_price = []
             for i in price:
