@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-from db_classes import PriceList, MatchCat, SafetyMatch
+from app.models.db_classes import PriceList, MatchCat, SafetyMatch
 import re
 
 

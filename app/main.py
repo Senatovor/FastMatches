@@ -6,7 +6,7 @@ from fastapi.templating import Jinja2Templates
 import uvicorn
 from sqlalchemy import create_engine
 from sqlalchemy.orm.session import sessionmaker
-from db_classes import Comment, SafetyMatch, MatchCat, PriceList, Shop
+from app.models.db_classes import Comment, SafetyMatch, MatchCat, PriceList, Shop
 
 
 app = FastAPI()
@@ -127,4 +127,4 @@ def shoping_del(shop_id: int, url: str, db: sessionmaker = Depends(get_db)):
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000)

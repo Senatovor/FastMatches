@@ -1,13 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm.session import sessionmaker
 import os
-from db_classes import Base
-from parser import give, url_content
+from app.models.db_classes import Base
+from app.parser import give, url_content
+from settings import get_db_url
 
 
-db_name = 'sql_app.db'
-SQLALCHEMY_DATABASE_URL = f'sqlite:///instance/{db_name}'
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+SQLALCHEMY_DATABASE_URL = get_db_url()
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autoflush=False, bind=engine)
 db = SessionLocal()
 
