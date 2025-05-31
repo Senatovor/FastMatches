@@ -1,8 +1,4 @@
-from .comment import Comment
-from .shop import Shop
-from .match import Match
-from .category import Category
-from .priceList import PriceList
+from .parser import (parsing_сategories_name_and_href, parsing_math, parsing_img, parsing_prices, get_soup)
 
 __all__ = [
     name for name, obj in locals().items()

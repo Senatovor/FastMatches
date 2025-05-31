@@ -9,15 +9,15 @@
 {% endblock %}
 
 {% block body %}
-<form action="/{{ url }}">
+<form action="/matches/{{ url }}">
     <button class="back">Вернутся</button>
 </form>
 
 <h1> Комментарии к {{ candle.name }}</h1>
 
 
-{% for comm in candle.commentaring %}
-<p>{{ comm.comment }} - {{ comm.stars }}</p>
+{% for comm in candle.comments %}
+<p>{{ comm.content }} - {{ comm.star }}</p>
 {% endfor %}
 
 <form method="post" class="forming">

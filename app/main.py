@@ -1,127 +1,125 @@
 from fastapi import FastAPI, Depends, Form
 from fastapi import status, Request, HTTPException
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import uvicorn
-from sqlalchemy import create_engine
-from sqlalchemy.orm.session import sessionmaker
-from app.models.db_classes import Comment, SafetyMatch, MatchCat, PriceList, Shop
-
+from app.database.session import SessionDep
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.services import *
+from app.schemes import *
 
 app = FastAPI()
 
-app.mount('/static', StaticFiles(directory='static'), name='static')
+app.mount('/static', StaticFiles(directory='../static'), name='static')
 
-templates = Jinja2Templates(directory='templates')
-
-db_name = 'sql_app.db'
-SQLALCHEMY_DATABASE_URL = f'sqlite:///instance/{db_name}'
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+templates = Jinja2Templates(directory='../templates')
 
 
-def get_db():
-    db = sessionmaker(autocommit=False, autoflush=False, bind=engine)()
-    try:
-        yield db
-    finally:
-        db.close()
+@app.get('/', response_class=HTMLResponse)
+async def home(request: Request, session: AsyncSession = SessionDep(commit=True)):
+    await UpdateDataService.update_database_matches(session)
+    categories = await CategoryService.find_all(session)
+
+    return templates.TemplateResponse(request=request, name='home.html', context={'categories': categories})
 
 
-@app.get('/')
-def home(request: Request):
-    return templates.TemplateResponse(request=request, name='home.html')
+@app.get('/matches/{index}')
+async def candles(request: Request, index: int, session: AsyncSession = SessionDep()):
+    find_category = await CategoryService.get_category_with_matches_and_price_list(session, index)
+
+    matches = sorted(find_category.matches, key=lambda x: x.name)
+
+    return templates.TemplateResponse(
+        request=request,
+        name='list.html',
+        context={
+            'matches': matches,
+            'category_id': find_category.id,
+            'category_title': find_category.title
+        }
+    )
 
 
-@app.get('/shopping/{url}')
-def shopping(request: Request, url: str, db: sessionmaker = Depends(get_db)):
-    array = db.query(Shop).all()
+@app.get('/shopping/{category_id}')
+async def shopping(request: Request, category_id: int, session: AsyncSession = SessionDep()):
+    shops = await ShopService.find_all(session)
 
     price = 0
-    for i in array:
+    for i in shops:
         price += i.match_price
 
-    return templates.TemplateResponse(request=request, name='shopping.html', context={'shop_item': array, 'all_price': price, 'url': url})
+    return templates.TemplateResponse(
+        request=request,
+        name='shopping.html',
+        context={'shop_item': shops, 'all_price': price, 'url': category_id}
+    )
 
 
-@app.get('/{url}')
-def candles(request: Request, url: str, db: sessionmaker = Depends(get_db)):
-    candles_catagory = db.query(MatchCat).filter(MatchCat.catagory == url).first()
+@app.get('/more/{category_id}/{index}')
+async def more(request: Request, category_id: int, index: int, session: AsyncSession = SessionDep()):
+    find_match = await MatchService.get_match_with_comments(session, index)
 
-    candlesing = candles_catagory.cat_id
-    candlesing.sort(key=lambda candle: candle.name, reverse=True)
-
-    if candles_catagory is None:
-        raise HTTPException(status_code=404, detail="Category not found")
-    return templates.TemplateResponse(request=request, name='list.html', context={'candle': candles_catagory})
-
-
-@app.get('/more/{url}/{id_id}')
-def more(request: Request, id_id: int, url: str, db: sessionmaker = Depends(get_db)):
-    candle = db.get(SafetyMatch, id_id)
-
-    if candle is None:
-        raise HTTPException(status_code=404, detail="Category not found")
-    return templates.TemplateResponse(request=request, name='more.html', context={'candle': candle, 'url': url})
+    return templates.TemplateResponse(
+        request=request,
+        name='more.html',
+        context={'candle': find_match, 'url': category_id}
+    )
 
 
-@app.post('/more/{url}/{id_id}')
-def add(id_id: int, url: str, comm=Form(), star=Form(), db: sessionmaker = Depends(get_db)):
-    candle = db.get(SafetyMatch, id_id)
-    if candle is None:
-        raise HTTPException(status_code=404, detail="Category not found")
+@app.post('/more/{category_id}/{index}')
+async def add(index: int, category_id: int, comm=Form(), star=Form(), session: AsyncSession = SessionDep(commit=True)):
+    find_match = await MatchService.get_match_with_comments(session, index)
 
-    commentar = Comment(comment=comm, stars=star, match_id=candle.id)
-    db.add(commentar)
-    db.commit()
+    create_comment = CommentScheme(content=comm, star=star, match_id=find_match.id)
+    await CommentService.add(session, create_comment)
 
     sum = 0
-    for i in candle.commentaring:
-        sum += i.stars
-    candle.star = int(sum / len(candle.commentaring))
-    db.commit()
-    db.refresh(candle)
+    for i in find_match.comments:
+        sum += i.star
+    if len(find_match.comments) == 0:
+        find_match.star = int(sum)
+    else:
+        find_match.star = int(sum / len(find_match.comments))
 
-    return RedirectResponse(f'/more/{url}/{id_id}', status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(f'/more/{category_id}/{index}', status_code=status.HTTP_303_SEE_OTHER)
 
 
-@app.get('/{sorted_by}/{url}')
-def sort(request: Request, sorted_by: str, url: str, db: sessionmaker = Depends(get_db)):
-    expexted_url = ['sorted_by_stars', 'sorted_by_price', 'sorted_by_time']
-    candles_catagory = db.query(MatchCat).filter(MatchCat.catagory == url).first()
+@app.get('/sort/{sorted_by}/{category_id}')
+async def sort(request: Request, sorted_by: str, category_id: int, session: AsyncSession = SessionDep()):
+    expected_url = ['sorted_by_stars', 'sorted_by_price']
+    find_category = await CategoryService.get_category_with_matches_and_price_list(session, category_id)
 
-    if candles_catagory is None:
-        raise HTTPException(status_code=404, detail="Category not found")
+    if sorted_by == expected_url[0]:
+        matches = sorted(find_category.matches, key=lambda x: x.star)
+    elif sorted_by == expected_url[1]:
+        matches = sorted(find_category.matches, key=lambda x: x.expected_price)
 
-    candles = candles_catagory.cat_id
-
-    if sorted_by == expexted_url[0]:
-        candles.sort(key=lambda candle: candle.star, reverse=True)
-    elif sorted_by == expexted_url[1]:
-        candles.sort(key=lambda candle: candle.expected_price, reverse=True)
-    elif sorted_by == expexted_url[2]:
-        candles.sort(key=lambda candle: candle.time, reverse=True)
-
-    return templates.TemplateResponse(request=request, name='list.html', context={'candle': candles_catagory})
+    return templates.TemplateResponse(
+        request=request,
+        name='list.html',
+        context={
+            'matches': matches,
+            'category_id': find_category.id,
+            'category_title': find_category.title
+        }
+    )
 
 
 @app.post('/shopping_add/{id_id}/{list_id}/{url}')
-def shopping_add(id_id: int, list_id: int, url: str, db: sessionmaker = Depends(get_db)):
-    candle = db.get(SafetyMatch, id_id)
-    price_item = db.get(PriceList, list_id)
+async def shopping_add(id_id: int, list_id: int, url: int, session: AsyncSession = SessionDep(commit=True)):
+    candle = await MatchService.find(session, id_id)
+    price_item = await PriceListService.find(session, list_id)
 
-    shop_item = Shop(match_name=candle.name, match_edition=price_item.edition, match_price=price_item.all_price)
-    db.add(shop_item)
-    db.commit()
+    shop_item = ShopScheme(match_name=candle.name, match_edition=price_item.edition, match_price=price_item.all_price)
+    await ShopService.add(session, shop_item)
 
     return RedirectResponse(f'/shopping/{url}', status_code=status.HTTP_303_SEE_OTHER)
 
 
 @app.post('/shopping_del/{shop_id}/{url}')
-def shoping_del(shop_id: int, url: str, db: sessionmaker = Depends(get_db)):
-    shop_item = db.get(Shop, shop_id)
-    db.delete(shop_item)
-    db.commit()
+async def shoping_del(shop_id: int, url: str, session: AsyncSession = SessionDep(commit=True)):
+    await ShopService.delete(session, shop_id)
 
     return RedirectResponse(f'/shopping/{url}', status_code=status.HTTP_303_SEE_OTHER)
 

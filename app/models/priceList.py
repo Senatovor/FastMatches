@@ -1,7 +1,6 @@
-from sqlalchemy import Integer, String, text, Float, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.database import Base
-import enum
+from sqlalchemy import Integer, Float, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
+from app.database.model import Base
 
 
 class PriceList(Base):

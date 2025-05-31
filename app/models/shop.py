@@ -1,6 +1,6 @@
-from sqlalchemy import Integer, String, text, Float, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
-from app.database import Base
+from sqlalchemy import Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
+from app.database.model import Base
 
 
 class Shop(Base):
