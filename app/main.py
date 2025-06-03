@@ -1,15 +1,29 @@
-from fastapi import FastAPI, Depends, Form
+from fastapi import FastAPI, Depends, Form, BackgroundTasks
 from fastapi import status, Request, HTTPException
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import uvicorn
-from app.database.session import SessionDep
+from app.database.session import SessionDep, session_manager
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.services import *
 from app.schemes import *
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+
+@asynccontextmanager
+async def parsing(app: FastAPI):
+    async with session_manager.session_factory() as session:
+        try:
+            await UpdateDataService.update_database_matches(session)
+            yield
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
+
+app = FastAPI(lifespan=parsing)
 
 app.mount('/static', StaticFiles(directory='../static'), name='static')
 
@@ -17,8 +31,7 @@ templates = Jinja2Templates(directory='../templates')
 
 
 @app.get('/', response_class=HTMLResponse)
-async def home(request: Request, session: AsyncSession = SessionDep(commit=True)):
-    await UpdateDataService.update_database_matches(session)
+async def home(request: Request, background_tasks: BackgroundTasks, session: AsyncSession = SessionDep(commit=True)):
     categories = await CategoryService.find_all(session)
 
     return templates.TemplateResponse(request=request, name='home.html', context={'categories': categories})
